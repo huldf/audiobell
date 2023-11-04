@@ -1,0 +1,66 @@
+#content {
+  flex-direction: row;
+}
+
+#wiki-content {
+  width: 67rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin-bottom: 2rem;
+}
+
+.wiki-block {
+  background-color: whitesmoke;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: 100%;
+  margin-top: 2rem;
+  border-radius: 0.5rem;
+}
+
+.wiki-block a {
+  user-select: initial;
+}
+
+.wiki-block > h2,
+.wiki-block > p {
+  margin: 1rem;
+}
+
+.wiki-block > h2 {
+  border-radius: 0.5rem;
+  background-color: lightgray;
+}
+
+.wiki-block > h2::selection {
+  color: lightgray;
+}
+
+.wiki-block > p {
+  text-align: justify;
+  line-height: 1.5rem;
+}
+
+.wiki-block > h3 {
+  margin: 0 1rem;
+  text-align: left;
+  font-weight: 800;
+}
+
+@media (prefers-color-scheme: dark) {
+  .wiki-block {
+    background-color: #343434;
+  }
+
+  .wiki-block > h2 {
+    background-color: gray;
+    color: black;
+  }
+
+  .wiki-block > h2::selection {
+    background-color: black;
+    color: gray;
+  }
+}

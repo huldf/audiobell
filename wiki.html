@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="author" content="huldf" />
+    <title>Audiobell - Wiki</title>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="wiki.css" />
+    <script src="audiobell.js" defer></script>
+  </head>
+  <body onload="footerUpdate()">
+    <header>
+      <h1>Informations sur Audiobell</h1>
+    </header>
+    <main id="content">
+      <article id="wiki-content">
+        <section class="wiki-block">
+          <h2 id="wiki-settings">Les paramètres</h2>
+          <p>
+            Audiobell dispose de plusieurs paramètres permettant de régler plus
+            en détail les calculs et l'affichage des différentes notes. Cette
+            section a pour objectif de détailler l'utilisation et les impacts de
+            ces paramètres.
+          </p>
+          <h3>Fréquence du <i>la</i>3/A4</h3>
+          <p>
+            La valeur choisie dans cette liste déroulante va définir la
+            fréquence de base à partir de laquelle toutes les notes seront
+            calculées. Étant donné que les cloches peuvent être de dates très
+            variables, il est possible de choisir une valeur de référence d'une
+            certaine époque afin de garder une cohérence avec de potentielles
+            archives sur la cloche étudiée.
+          </p>
+          <h3>Système de notes</h3>
+          <p>
+            Le système de notes change uniquement leur affichage en se basant
+            sur différentes normes mais n'a aucun impact sur les calculs.
+          </p>
+          <h3>Notes des partiels mesurés</h3>
+          <p>
+            Les partiels mesurés peuvent être calculés selon deux méthodes
+            distinctes. La méthode "absolue" calcule chaque note à partir de la
+            fréquence du <i>la</i>3/A4 choisie (comme pour les partiels
+            théoriques). La méthode "relative" calcule chaque note par rapport
+            aux notes des partiels théoriques.<br />
+            Prenons comme exemple un fondamental théorique de 659 Hz, un
+            fondamental mesuré à 711 Hz et un <i>la</i>3/A4 à 440 Hz.<br />
+            Avec la méthode absolue on obtient un <i>mi</i>4 parfait en note
+            théorique et un <i>fa</i>4 (+5/16) en note mesurée. Avec la méthode
+            relative, la note mesurée est calculée à partir de la note théorique
+            ce qui donne ici, un <i>mi</i>4 (+21/16) pour la note mesurée.
+          </p>
+          <h3>Sauvegarder les résultats</h3>
+          <p>
+            Une fois les calculs effectués, Audiobell permet de télécharger les
+            résultats sous différentes formes afin de les exploiter
+            ultérieurement. Le format "image" sauvegarde les résultats sous
+            forme d'image PNG comme affichés sur la page. Le format "tableau de
+            données" permet de télécharger un fichier CSV exploitable par un
+            logiciel tableur, contenant les résultats actuels. Notez que toutes
+            les valeurs doivent être renseignées pour pouvoir utiliser cette
+            option.
+          </p>
+          <h3>Graphique</h3>
+          <p>
+            Il est possible de générer un graphique permettant de visualiser les
+            différents partiels en fonction de la norme de Limbourg. Ce
+            graphique peut ensuite être téléchargé au besoin (en différentes
+            tailles) au format PNG. Notez que toutes les valeurs doivent être
+            renseignées pour pouvoir utiliser cette option.
+          </p>
+        </section>
+        <section class="wiki-block">
+          <h2>Le fonctionnement</h2>
+          <p>
+            Après avoir réglé les différents
+            <a href="#wiki-settings">paramètres</a>, les premières valeurs à
+            renseigner sont les partiels théoriques. Avec Audiobell, la saisie
+            est facilitée puisque tous les partiels théoriques sont
+            automatiquement calculés en fonction de la dernière modification.<br />
+            Une fois toutes les valeurs théoriques correctes, il est possible de
+            renseigner les partiels mesurés afin de voir les résultats
+            s'afficher ainsi que de pouvoir les exporter.
+          </p>
+        </section>
+      </article>
+    </main>
+    <footer>
+      <p id="footer-title">Audiobell</p>
+      <a href="index.html">Site Web</a>
+      <a href="https://github.com/huldf/audiobell/" target="_blank"
+        >Code source</a
+      >
+    </footer>
+  </body>
+</html>
