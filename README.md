@@ -33,6 +33,7 @@ Automatically adapts to your device theme.
 - [Material Symbols](https://fonts.google.com/icons) by Google.
 - [Google Charts](https://developers.google.com/chart) library.
 - [html2canvas](https://html2canvas.hertzen.com/) library by [Niklas von Hertzen](https://hertzen.com/).
+- [Jest](https://jestjs.io/) JavaScript testing framework by Facebook.
 - [cdnjs](https://cdnjs.com/) CDN by Cloudflare.
 - [MDN Web Docs](https://developer.mozilla.org/) dark theme colors by Mozilla.
 
