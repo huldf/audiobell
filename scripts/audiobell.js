@@ -1,15 +1,20 @@
 "use strict";
 
+// global variable used to set the note finder target
+let G_NOTE_FINDER_TARGET;
+
 function thPartielsValues(updatedInputName) {
   const thFrequencies = Array.apply(
     null,
-    document.querySelectorAll("#th-partiels>.input-tile>.input-frequency>input")
+    document.querySelectorAll(
+      "#th-partiels>.input-tile>.input-frequency>input",
+    ),
   );
   const [bourdon, fondamental, tierceMineure, quinte, nominal] = thFrequencies;
 
   // get the currently updated input DOM object
   const updatedInput = document.getElementById(
-    "th-" + updatedInputName + "-frequency"
+    "th-" + updatedInputName + "-frequency",
   );
 
   if (
@@ -35,7 +40,7 @@ function thPartielsValues(updatedInputName) {
     // clear all theoretical notes values
     document
       .querySelectorAll("#th-partiels>.input-tile>.input-note>p")
-      .forEach((element) => (element.innerHTML = "Note :"));
+      .forEach((element) => (element.innerText = "Note :"));
   } else {
     // show measured values inputs
     document.getElementById("me-partiels").style.display = "flex";
@@ -85,7 +90,7 @@ function thPartielsValues(updatedInputName) {
     // update all theoretical notes values
     const thNotes = Array.apply(
       null,
-      document.querySelectorAll("#th-partiels>.input-tile>.input-note>p")
+      document.querySelectorAll("#th-partiels>.input-tile>.input-note>p"),
     );
     for (let i = 0; i < thNotes.length; i++) {
       thNotes[i].innerHTML =
@@ -93,7 +98,7 @@ function thPartielsValues(updatedInputName) {
         getNoteFromFrequency(
           thFrequencies[i].value.valueOf(),
           getBaseNote(),
-          getNoteSystem()
+          getNoteSystem(),
         );
     }
   }
@@ -102,41 +107,46 @@ function thPartielsValues(updatedInputName) {
 function mePartielsValues() {
   const thFrequencies = [
     ...document.querySelectorAll(
-      "#th-partiels>.input-tile>.input-frequency>input"
+      "#th-partiels>.input-tile>.input-frequency>input",
     ),
   ].map((input) => +input.value);
   const meFrequencies = [
     ...document.querySelectorAll(
-      "#me-partiels>.input-tile>.input-frequency>input"
+      "#me-partiels>.input-tile>.input-frequency>input",
     ),
   ].map((input) => +input.value);
   const meNotes = [
     ...document.querySelectorAll(
-      "#me-partiels>.input-tile>.input-note>p:nth-child(1)"
+      "#me-partiels>.input-tile>.input-note>p:nth-child(1)",
     ),
   ].map((p) => p.getAttribute("id"));
   const meGaps = [
     ...document.querySelectorAll(
-      "#me-partiels>.input-tile>.input-note>p:nth-child(2)"
+      "#me-partiels>.input-tile>.input-note>p:nth-child(2)",
     ),
   ].map((p) => p.getAttribute("id"));
 
   for (let i = 0; i < thFrequencies.length; i++) {
-    setMePartielValues(
+    setMePartielsValues(
       thFrequencies[i],
       meFrequencies[i],
       meNotes[i],
-      meGaps[i]
+      meGaps[i],
     );
   }
 
-  function setMePartielValues(thFrequency, meFrequency, meNoteName, meGapName) {
+  function setMePartielsValues(
+    thFrequency,
+    meFrequency,
+    meNoteName,
+    meGapName,
+  ) {
     const fsGap = getFrequenciesSemitoneGap(thFrequency, meFrequency);
     let meNote = document.getElementById(meNoteName);
     let meGap = document.getElementById(meGapName);
     if (meFrequency == null || meFrequency == 0) {
-      meNote.innerHTML = "Note :";
-      meGap.innerHTML = "Écart :";
+      meNote.innerText = "Note :";
+      meGap.innerText = "Écart :";
     } else {
       if (getMePartielsNotes() == "absolute") {
         meNote.innerHTML =
@@ -147,18 +157,24 @@ function mePartielsValues() {
           "Note : " + getRelativeMeNote(thFrequency, meFrequency);
       }
       if (fsGap < 0) {
-        meGap.innerHTML = "Écart : " + fsGap + "/16";
+        meGap.innerText = "Écart : " + fsGap + "/16";
       } else if (fsGap > 0) {
-        meGap.innerHTML = "Écart : +" + fsGap + "/16";
+        meGap.innerText = "Écart : +" + fsGap + "/16";
       } else {
-        meGap.innerHTML = "Écart : aucun";
+        meGap.innerText = "Écart : aucun";
       }
     }
   }
 }
 
 // returns the note from a frequency
-function getNoteFromFrequency(frequency, base, system) {
+function getNoteFromFrequency(
+  frequency,
+  base,
+  system,
+  noteFinder = 0,
+  semitoneGap = 0,
+) {
   let frequencyIterator = base;
   const notesNamingSystems = {
     latin: {
@@ -199,7 +215,7 @@ function getNoteFromFrequency(frequency, base, system) {
       notes: ["C", "C♯", "D", "D♯", "E", "F", "F♯", "G", "G♯", "A", "A♯", "B"],
       octaveIterator: 4,
     },
-    deutsch: {
+    german: {
       notes: ["C", "C♯", "D", "D♯", "E", "F", "F♯", "G", "G♯", "A", "A♯", "H"],
       octaveIterator: 4,
     },
@@ -212,11 +228,12 @@ function getNoteFromFrequency(frequency, base, system) {
   let noteIterator = 9;
   let semitoneIterator = 16;
   let iterator = 0;
+  let upperNoteFinder = false;
 
   if (
     frequency > frequencyIterator &&
     frequency >= 63.77 &&
-    frequency <= 8133.68
+    frequency <= 7449.71
   ) {
     while (frequency > frequencyIterator) {
       iterator++;
@@ -253,10 +270,11 @@ function getNoteFromFrequency(frequency, base, system) {
       }
       semitoneIterator--;
     }
+    upperNoteFinder = true;
   } else if (
     frequency < frequencyIterator &&
     frequency >= 63.77 &&
-    frequency <= 8133.68
+    frequency <= 7449.71
   ) {
     while (frequency < frequencyIterator) {
       iterator--;
@@ -295,13 +313,50 @@ function getNoteFromFrequency(frequency, base, system) {
     }
   }
 
+  // note finder
+  if (noteFinder == 1) {
+    let frequency1 = frequencyIterator;
+    let frequency2 = base * Math.pow(2, (iterator + 1) / 192);
+    if (upperNoteFinder || iterator == 0) {
+      iterator += 16;
+    }
+
+    if (iterator != 0 && iterator % 16) {
+      const remainder1 = iterator % 16;
+      frequency1 = base * Math.pow(2, (iterator - remainder1 - 16) / 192);
+    }
+
+    if (frequency < frequency1 && upperNoteFinder) {
+      frequency1 = base * Math.pow(2, (iterator - 32) / 192);
+      iterator -= 16;
+    }
+
+    if (iterator + 1 != 0 && (iterator + 1) % 16) {
+      const remainder2 = (iterator + 1) % 16;
+      frequency2 = base * Math.pow(2, (iterator + 1 - remainder2) / 192);
+    }
+
+    return [frequency1, frequency2];
+  }
+
   if (semitoneIterator > 8) {
     semitoneIterator -= 16;
   }
 
+  // semitone gap
+  if (semitoneGap == 1) {
+    return (
+      (octaveIterator * 12 +
+        noteIterator -
+        (notesNamingSystems[system].octaveIterator * 12 + 9)) *
+        16 +
+      semitoneIterator
+    );
+  }
+
   // if latin note system selected, return note in italic
   if (system == "latin" || system == "latin-old") {
-    if (frequency < 63.77 || frequency > 8133.68) {
+    if (frequency < 63.77 || frequency > 7449.71) {
       return "Erreur";
     } else if (semitoneIterator == 0 || frequency == base) {
       return (
@@ -321,7 +376,7 @@ function getNoteFromFrequency(frequency, base, system) {
       );
     }
   } else {
-    if (frequency < 63.77 || frequency > 8133.68) {
+    if (frequency < 63.77 || frequency > 7449.71) {
       return "Erreur";
     } else if (semitoneIterator == 0 || frequency == base) {
       return notes[noteIterator].concat(octaveIterator, " parfait");
@@ -330,22 +385,20 @@ function getNoteFromFrequency(frequency, base, system) {
         octaveIterator,
         " (+",
         semitoneIterator,
-        "/16)"
+        "/16)",
       );
     } else {
       return notes[noteIterator].concat(
         octaveIterator,
         " (",
         semitoneIterator,
-        "/16)"
+        "/16)",
       );
     }
   }
 }
 
 function getFrequenciesSemitoneGap(thFrequency, meFrequency) {
-  let iterator = 0;
-
   if (
     getNoteFromFrequency(thFrequency) === "Erreur" ||
     getNoteFromFrequency(meFrequency) === "Erreur"
@@ -353,34 +406,16 @@ function getFrequenciesSemitoneGap(thFrequency, meFrequency) {
     return 0;
   }
 
-  if (thFrequency > meFrequency) {
-    let frequencyIterator = meFrequency;
-    while (thFrequency > frequencyIterator) {
-      iterator++;
-      frequencyIterator = meFrequency * Math.pow(2, iterator / 192);
-    }
-    iterator--;
-    iterator = 0 - iterator;
-  } else if (meFrequency > thFrequency) {
-    let frequencyIterator = thFrequency;
-    while (meFrequency > frequencyIterator) {
-      iterator++;
-      frequencyIterator = thFrequency * Math.pow(2, iterator / 192);
-    }
-    iterator--;
-  }
-
-  if (thFrequency == meFrequency) {
-    return 0;
-  } else {
-    return iterator.valueOf();
-  }
+  return (
+    getNoteFromFrequency(meFrequency, getBaseNote(), getNoteSystem(), 0, 1) -
+    getNoteFromFrequency(thFrequency, getBaseNote(), getNoteSystem(), 0, 1)
+  );
 }
 
 function getRelativeMeNote(thFrequency, meFrequency) {
   if (
-    getNoteFromFrequency(meFrequency) === "Erreur" ||
-    getNoteFromFrequency(thFrequency) === "Erreur"
+    getNoteFromFrequency(thFrequency) === "Erreur" ||
+    getNoteFromFrequency(meFrequency) === "Erreur"
   ) {
     return "Erreur";
   }
@@ -389,16 +424,16 @@ function getRelativeMeNote(thFrequency, meFrequency) {
   const thNote = getNoteFromFrequency(
     thFrequency,
     getBaseNote(),
-    getNoteSystem()
+    getNoteSystem(),
   );
 
-  const meFrequencyIterator = getFrequenciesSemitoneGap(
-    getBaseNote(),
-    meFrequency
-  );
   const thFrequencyIterator = getFrequenciesSemitoneGap(
     getBaseNote(),
-    thFrequency
+    thFrequency,
+  );
+  const meFrequencyIterator = getFrequenciesSemitoneGap(
+    getBaseNote(),
+    meFrequency,
   );
   const iteratorsGap = meFrequencyIterator - thFrequencyIterator;
 
@@ -430,6 +465,140 @@ function getRelativeMeNote(thFrequency, meFrequency) {
   }
 }
 
+function setNoteFinderValues() {
+  const meNoteFinder = document.getElementById(
+    "note-finder-measured-frequency",
+  );
+  const previousFrequency = document.getElementById(
+    "note-finder-previous-frequency",
+  );
+  const previousNote = document.getElementById("note-finder-previous-note");
+  const nextFrequency = document.getElementById("note-finder-next-frequency");
+  const nextNote = document.getElementById("note-finder-next-note");
+  const closestNote = document.getElementById("note-finder-closest");
+  const buttonPrevious = document.getElementById("note-finder-send-previous");
+  const buttonNext = document.getElementById("note-finder-send-next");
+
+  // reset view if frequency is out of range
+  if (meNoteFinder.value < 67.25 || meNoteFinder.value > 7039.99) {
+    closestNote.innerText = "Fréquence non valide";
+    previousFrequency.innerText = "Non renseignée";
+    previousNote.innerText = "?";
+    nextFrequency.innerText = "Non renseignée";
+    nextNote.innerText = "?";
+    // disable buttons
+    buttonPrevious.disabled = true;
+    buttonPrevious.setAttribute("style", "cursor: not-allowed !important");
+    buttonNext.disabled = true;
+    buttonNext.setAttribute("style", "cursor: not-allowed !important");
+    return;
+  }
+
+  const noteFinderTable = getNoteFromFrequency(
+    meNoteFinder.value,
+    getBaseNote(),
+    getNoteSystem(),
+    1,
+  );
+  const previous = noteFinderTable[0];
+  const next = noteFinderTable[1];
+
+  previousFrequency.innerText = Number(previous).toFixed(2) + " Hz";
+  nextFrequency.innerText = Number(next).toFixed(2) + " Hz";
+
+  previousNote.innerHTML = getNoteFromFrequency(
+    previous,
+    getBaseNote(),
+    getNoteSystem(),
+  );
+  nextNote.innerHTML = getNoteFromFrequency(
+    next,
+    getBaseNote(),
+    getNoteSystem(),
+  );
+
+  if (
+    meNoteFinder.value - Number(previous) <
+    Number(next) - meNoteFinder.value
+  ) {
+    closestNote.innerText = "Note + proche : ◀ précédente";
+  } else if (
+    meNoteFinder.value - Number(previous) >
+    Number(next) - meNoteFinder.value
+  ) {
+    closestNote.innerText = "Note + proche : suivante ▶";
+  } else {
+    closestNote.innerText = "Note + proche : aucune";
+  }
+
+  // enable buttons
+  buttonPrevious.disabled = false;
+  buttonPrevious.setAttribute("style", "cursor: pointer !important");
+  buttonNext.disabled = false;
+  buttonNext.setAttribute("style", "cursor: pointer !important");
+}
+
+function setNoteFinderValuesPopup(target) {
+  let calculated = "Vide";
+  const measured = document.getElementById(
+    "note-finder-measured-frequency",
+  ).value;
+  switch (target) {
+    case "previous":
+      calculated = document.getElementById(
+        "note-finder-previous-frequency",
+      ).innerText;
+      G_NOTE_FINDER_TARGET = "previous";
+      break;
+    case "next":
+      calculated = document.getElementById(
+        "note-finder-next-frequency",
+      ).innerText;
+      G_NOTE_FINDER_TARGET = "next";
+      break;
+    default:
+      break;
+  }
+  document.getElementById("calculated-note-finder-select").innerText =
+    calculated;
+  document.getElementById("measured-note-finder-select").innerText =
+    measured + " Hz";
+}
+
+function sendNoteFinderValues() {
+  const partielsSelect = document.getElementById("note-finder-select").value;
+  let calculated = 0;
+  const measured = document.getElementById(
+    "note-finder-measured-frequency",
+  ).value;
+  switch (G_NOTE_FINDER_TARGET) {
+    case "previous":
+      calculated = document
+        .getElementById("note-finder-previous-frequency")
+        .innerText.slice(0, -3)
+        .trim();
+      break;
+    case "next":
+      calculated = document
+        .getElementById("note-finder-next-frequency")
+        .innerText.slice(0, -3)
+        .trim();
+    default:
+      break;
+  }
+  // define the theoretical partial
+  document.getElementById("th-" + partielsSelect + "-frequency").value =
+    calculated;
+  // calculate all other theoretical partials
+  thPartielsValues(partielsSelect);
+  // define the measured partial
+  document.getElementById("me-" + partielsSelect + "-frequency").value =
+    measured;
+  // refresh measured partials
+  mePartielsValues();
+  hidePopups();
+}
+
 function getDynamicFileName(fileExtension) {
   let currentDate = new Date();
   let fileName =
@@ -455,45 +624,45 @@ function downloadResultsCsv() {
   thFrequencies.push(
     ...[
       ...document.querySelectorAll(
-        "#th-partiels>.input-tile>.input-frequency>input"
+        "#th-partiels>.input-tile>.input-frequency>input",
       ),
-    ].map((input) => +input.value)
+    ].map((input) => +input.value),
   );
   // theoretical notes
   let thNotes = ["Note théorique"];
   thNotes.push(
     ...[
       ...document.querySelectorAll(
-        "#th-partiels>.input-tile>.input-note>p:nth-child(1)"
+        "#th-partiels>.input-tile>.input-note>p:nth-child(1)",
       ),
-    ].map((p) => p.innerText.replace("Note : ", ""))
+    ].map((p) => p.innerText.replace("Note : ", "")),
   );
   // measured frequencies
   let meFrequencies = ["Fréquence mesurée (Hz)"];
   meFrequencies.push(
     ...[
       ...document.querySelectorAll(
-        "#me-partiels>.input-tile>.input-frequency>input"
+        "#me-partiels>.input-tile>.input-frequency>input",
       ),
-    ].map((input) => +input.value)
+    ].map((input) => +input.value),
   );
   // measured notes
   let meNotes = ["Note mesurée"];
   meNotes.push(
     ...[
       ...document.querySelectorAll(
-        "#me-partiels>.input-tile>.input-note>p:nth-child(1)"
+        "#me-partiels>.input-tile>.input-note>p:nth-child(1)",
       ),
-    ].map((p) => p.innerText.replace("Note : ", ""))
+    ].map((p) => p.innerText.replace("Note : ", "")),
   );
   // gaps between theoretical & measured values
   let meGaps = ["Écart (1/16 demi-ton)"];
   meGaps.push(
     ...[
       ...document.querySelectorAll(
-        "#me-partiels>.input-tile>.input-note>p:nth-child(2)"
+        "#me-partiels>.input-tile>.input-note>p:nth-child(2)",
       ),
-    ].map((p) => p.innerText.replace("Écart : ", ""))
+    ].map((p) => p.innerText.replace("Écart : ", "")),
   );
 
   const csvData = [
@@ -523,11 +692,11 @@ function downloadResultsImage() {
   const bgColor = isDarkModeEnabled() ? "#1b1b1b" : "lightsteelblue";
   // replace spaces with non-breaking spaces in titles to prevent rendering issues
   Array.from(document.getElementsByClassName("partiels-title")).forEach(
-    (element) => (element.innerHTML = element.innerHTML.replace(" ", "&nbsp;"))
+    (element) => (element.innerHTML = element.innerHTML.replace(" ", "&nbsp;")),
   );
   // remove the number type attribute from all inputs to prevent empty values when rendering in Firefox
   Array.from(document.getElementsByTagName("input")).forEach((element) =>
-    element.setAttribute("type", "")
+    element.setAttribute("type", ""),
   );
   html2canvas(document.querySelector("#content"), {
     backgroundColor: bgColor,
@@ -542,11 +711,11 @@ function downloadResultsImage() {
     // rollback non-breaking spaces to original spaces
     Array.from(document.getElementsByClassName("partiels-title")).forEach(
       (element) =>
-        (element.innerHTML = element.innerHTML.replace("&nbsp;", " "))
+        (element.innerHTML = element.innerHTML.replace("&nbsp;", " ")),
     );
     // reset all input type attributes back to number
     Array.from(document.getElementsByTagName("input")).forEach((element) =>
-      element.setAttribute("type", "number")
+      element.setAttribute("type", "number"),
     );
   });
 }
@@ -555,7 +724,7 @@ function downloadResults() {
   if (isDataInvalid()) {
     hidePopups();
     setTimeout(function () {
-      alert("Renseigner toutes les valeurs pour télécharger les résultats");
+      showPopup("data-error-popup");
     }, 0);
     return;
   }
@@ -568,19 +737,24 @@ function downloadResults() {
 }
 
 function getDownloadResultsFormat() {
+  if (isDataInvalid()) {
+    hidePopups();
+    showPopup("data-error-popup");
+    return;
+  }
   const downloadResultsFormat = document
     .getElementById("dl-results-format")
     .value.valueOf();
   let downloadResultsDescription = document.getElementById(
-    "dl-results-description"
+    "dl-results-description",
   );
   switch (downloadResultsFormat) {
     case "image":
-      downloadResultsDescription.innerHTML =
+      downloadResultsDescription.innerText =
         "Ce format sauvegarde les résultats comme affichés sur la page.";
       break;
     default:
-      downloadResultsDescription.innerHTML =
+      downloadResultsDescription.innerText =
         "Ce format sauvegarde les résultats dans un fichier exploitable par un logiciel tableur.";
       break;
   }
@@ -716,7 +890,7 @@ function enableBackground() {
 function showPartielsChart() {
   hidePopups();
   if (isDataInvalid()) {
-    alert("Renseigner toutes les valeurs pour afficher le graphique");
+    showPopup("data-error-popup");
   } else {
     disableBackground();
     // draw the chart
@@ -727,10 +901,10 @@ function showPartielsChart() {
     document.getElementById("partiels-chart-events").style.opacity = "100%";
     document.getElementById("partiels-chart-events").style.zIndex = "1";
     Array.from(document.getElementsByClassName("partiels-chart-event")).forEach(
-      (element) => (element.style.opacity = "100%")
+      (element) => (element.style.opacity = "100%"),
     );
     Array.from(document.getElementsByClassName("partiels-chart-event")).forEach(
-      (element) => (element.style.zIndex = "1")
+      (element) => (element.style.zIndex = "1"),
     );
   }
 }
@@ -759,7 +933,7 @@ function isDarkModeEnabled() {
   );
 }
 
-// resize chart only when showed & add cooldown to limit CPU load
+// resize chart only when showed & add cool down to limit CPU load
 let resizeTimer;
 window.addEventListener("resize", function () {
   this.clearTimeout(resizeTimer);
@@ -771,7 +945,7 @@ window.addEventListener("resize", function () {
 });
 
 function getAudiobellVersionNumber() {
-  const audiobellVersion = "1.0.0";
+  const audiobellVersion = "1.1.0";
   return audiobellVersion;
 }
 
@@ -791,8 +965,22 @@ function hidePopups() {
   enableBackground();
   // hide the popups
   Array.from(document.getElementsByClassName("popup")).forEach(
-    (element) => (element.style.display = "none")
+    (element) => (element.style.display = "none"),
   );
+}
+
+function toggleMenu() {
+  document
+    .getElementsByClassName("toggle-menu")[0]
+    .classList.toggle("toggle-menu-hidden");
+  // change button content
+  let toggleButton = document.getElementById("toggle-menu-button");
+  if (toggleButton.innerText == "Réduire ▲") {
+    toggleButton.innerText = "Paramètres ▼";
+    window.scrollTo(0, 0);
+  } else {
+    toggleButton.innerText = "Réduire ▲";
+  }
 }
 
 function getBaseNote() {
@@ -807,7 +995,9 @@ function getNoteSystem() {
 
 function getMePartielsNotes() {
   let mePartielsNotes = document.getElementById(
-    "me-partiels-notes-select"
+    "me-partiels-notes-select",
   ).value;
   return mePartielsNotes.valueOf();
 }
+
+module.exports = { getNoteFromFrequency };
