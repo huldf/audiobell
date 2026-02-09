@@ -86,7 +86,8 @@ h2 > a {
   user-select: none;
 }
 
-.partiels-title {
+.partiels-title,
+.note-finder-title {
   margin: 0;
 }
 
@@ -99,21 +100,21 @@ a {
   user-select: none;
 }
 
-/* main elements */
+/* header */
 
 header {
-  padding-top: 2rem;
+  padding: 1rem 0;
+  background-color: whitesmoke;
+  border-radius: 0 0 1rem 1rem;
 }
 
-main,
-header {
-  margin: 0 1rem;
-}
+/* main */
 
 main {
   display: flex;
   flex-direction: column;
   justify-content: center;
+  margin: 0 1rem;
 }
 
 /* settings */
@@ -133,6 +134,7 @@ main {
   flex-direction: column;
   align-items: center;
   border-radius: 0.15rem;
+  height: 7rem;
   width: 13rem;
   box-sizing: border-box;
 }
@@ -161,7 +163,9 @@ main {
 #settings > div > select,
 #settings > div > button,
 .popup button,
-.popup select {
+.popup select,
+.note-finder-send,
+#toggle-menu-button {
   font-family: "Noto Serif", serif;
   margin-top: 0.5rem;
   border: none;
@@ -177,8 +181,120 @@ main {
 #settings > div > select:hover,
 #settings > div > button:hover,
 .popup button:hover,
-.popup select:hover {
+.popup select:hover,
+.note-finder-send:hover,
+#toggle-menu-button:hover {
   cursor: pointer;
+}
+
+/* note finder */
+
+#note-finder {
+  margin-top: 2rem;
+}
+
+#note-finder-content {
+  display: flex;
+  justify-content: center;
+  margin: 2rem 0 0 0;
+}
+
+#note-finder-previous,
+#note-finder-frequency,
+#note-finder-next {
+  background-color: whitesmoke;
+  height: 8rem;
+  width: 22rem;
+  border-radius: 0.15rem;
+  margin-right: 0.5rem;
+  padding: 0.5rem 1rem;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+#note-finder-previous {
+  border-radius: 0.5rem 0.15rem 0.15rem 0.5rem;
+}
+
+#note-finder-frequency > div,
+#note-finder-frequency > div > input,
+#note-finder-frequency > div > p {
+  margin-top: 0;
+}
+
+#note-finder-frequency > .note-finder-info {
+  height: 2rem;
+  align-items: center;
+}
+
+#note-finder-next {
+  margin: 0;
+  border-radius: 0.15rem 0.5rem 0.5rem 0.15rem;
+}
+
+.note-finder-info {
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: space-between;
+}
+
+.note-finder-info > p {
+  margin: 0;
+}
+
+.note-finder-send {
+  width: 100%;
+  margin: 0;
+  cursor: not-allowed !important;
+}
+
+#use-note-finder-frequency > div {
+  display: flex;
+  width: 100%;
+  justify-content: space-evenly;
+}
+
+#use-note-finder-frequency > div > h3 {
+  padding: 0 0.5rem;
+  width: 25%;
+  min-width: max-content;
+}
+
+#calculated-note-finder-select,
+#measured-note-finder-select {
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  user-select: none;
+}
+
+#calculated-note-finder-select {
+  background-color: forestgreen;
+  width: 25%;
+}
+
+#measured-note-finder-select {
+  background-color: chocolate;
+  width: 25%;
+}
+
+/* toggle menu */
+
+.toggle-menu {
+  display: flex;
+  flex-direction: column;
+  &.toggle-menu-hidden {
+    display: none;
+  }
+}
+
+#toggle-menu-button {
+  background-color: whitesmoke;
+  align-self: center;
+  max-width: 67rem;
+  margin-top: 2rem;
 }
 
 /* tiles */
@@ -398,8 +514,14 @@ footer {
   margin: 0;
 }
 
-footer > a {
-  margin: 0.5rem 0 0 0;
+footer > div > a {
+  margin: 0.5rem 0.5rem 0 0.5rem;
+}
+
+.footer-line {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
 }
 
 /* chart */
@@ -449,7 +571,7 @@ footer > a {
   margin-left: 1rem;
   cursor: pointer;
   border-radius: 0.5rem;
-  border: 0.2rem solid gray;
+  background-color: lightgray;
 }
 
 /* responsive UI */
@@ -509,20 +631,29 @@ footer > a {
     margin: 0;
   }
 
-  #settings {
+  #settings,
+  #note-finder-content {
     flex-direction: column;
   }
 
-  #settings > div {
+  #settings > div,
+  #note-finder-content > div {
     margin: 0 0 0.5rem 0;
-    width: 100%;
+    width: 75%;
+    align-self: center;
   }
 
-  #settings > div:first-child {
+  #toggle-menu-button {
+    width: 75%;
+  }
+
+  #settings > div:first-child,
+  #note-finder-content > div:first-child {
     border-radius: 0.5rem 0.5rem 0.15rem 0.15rem;
   }
 
-  #settings > div:last-child {
+  #settings > div:last-child,
+  #note-finder-content > div:last-child {
     border-radius: 0.15rem 0.15rem 0.5rem 0.5rem;
   }
 
@@ -569,22 +700,26 @@ footer > a {
     margin: 0 0.5rem 0 0.5rem;
   }
 
-  #settings {
+  #settings,
+  #note-finder-content {
     flex-direction: column;
   }
 
-  #settings > div {
+  #settings > div,
+  #note-finder-content > div {
     margin: 0 0 0.5rem 0;
     width: 100%;
   }
 
   #settings > div:first-child,
+  #note-finder-content > div:first-child,
   #th-partiels > div:first-child,
   #me-partiels > div:first-child {
     border-radius: 0.5rem 0.5rem 0.15rem 0.15rem;
   }
 
   #settings > div:last-child,
+  #note-finder-content > div:last-child,
   #th-partiels > div:last-child,
   #me-partiels > div:last-child {
     border-radius: 0.15rem 0.15rem 0.5rem 0.5rem;
@@ -606,7 +741,6 @@ footer > a {
 
   .partiels-chart-event {
     fill: black;
-    border: 0.2rem solid black;
   }
 }
 
@@ -622,6 +756,8 @@ footer > a {
   }
 }
 
+/* dark theme */
+
 @media (prefers-color-scheme: dark) {
   body {
     background-color: #1b1b1b;
@@ -632,29 +768,30 @@ footer > a {
     background-color: white;
   }
 
+  #note-finder-previous,
+  #note-finder-frequency,
+  #note-finder-next,
   #settings > div,
   #th-partiels > div,
   #me-partiels > div,
   #me-partiels-placeholder > div,
   .popup,
+  header,
   footer {
     background-color: #343434;
   }
 
+  #toggle-menu-button {
+    background-color: lightgray;
+  }
+
   .input-frequency > input {
     border-color: gray;
+    background-color: lightgray;
   }
 
   .input-frequency > input:focus {
     border-color: white;
-  }
-
-  #settings > div > select,
-  #settings > div > button,
-  .input-frequency > input,
-  .popup button,
-  .popup select {
-    background-color: lightgray;
   }
 
   ::selection {
@@ -672,13 +809,6 @@ footer > a {
     background-color: #343434;
     color: white;
   }
-
-  @media only screen and (min-width: 0) and (max-width: 525px) {
-    .partiels-chart-event {
-      fill: white;
-      border: 0.2rem solid white;
-    }
-  }
 }
 
 /* colors
@@ -691,6 +821,8 @@ footer > a {
 - lightgray
 - gray
 - steelblue
+- forestgreen
+- chocolate
 
 [light theme]
 

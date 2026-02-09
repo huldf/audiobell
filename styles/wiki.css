@@ -30,8 +30,10 @@
 }
 
 .wiki-block > h2 {
-  border-radius: 0.5rem;
+  border-radius: 0.5rem 0.5rem 0.15rem 0.15rem;
   background-color: lightgray;
+  justify-content: left;
+  padding-left: 0.5rem;
 }
 
 .wiki-block > h2::selection {
@@ -47,6 +49,7 @@
   margin: 0 1rem;
   text-align: left;
   font-weight: 800;
+  font-size: 1.25rem;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -55,12 +58,10 @@
   }
 
   .wiki-block > h2 {
-    background-color: gray;
     color: black;
   }
 
   .wiki-block > h2::selection {
     background-color: black;
-    color: gray;
   }
 }
