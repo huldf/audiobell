@@ -16,7 +16,7 @@
   </head>
 
   <body
-    onload="thPartielsValues('fondamental'), mePartielsValues(), footerUpdate()"
+    onload="thPartielsValues('fondamental'), mePartielsValues(), setNoteFinderValues(), footerUpdate()"
   >
     <!-- popups -->
     <section id="th-partiels-popup" class="popup">
@@ -72,6 +72,38 @@
       </button>
       <button onclick="showPartielsChart()">Annuler</button>
     </section>
+    <section id="use-note-finder-frequency" class="popup">
+      <h3>Utiliser les fréquences en tant que</h3>
+      <select name="note-finder-select" id="note-finder-select" oninput="">
+        <option value="bourdon">Bourdon</option>
+        <option value="fondamental" selected>Fondamental</option>
+        <option value="tierce-mineure">Tierce mineure</option>
+        <option value="quinte">Quinte</option>
+        <option value="nominal">Nominal</option>
+      </select>
+      <p>
+        Permet d'utiliser la fréquence calculée et la fréquence mesurée
+        respectivement en tant que partiel théorique et partiel mesuré.
+      </p>
+      <div>
+        <h3>Calculée</h3>
+        <h3>Mesurée</h3>
+      </div>
+      <div>
+        <p id="calculated-note-finder-select"></p>
+        <p id="measured-note-finder-select"></p>
+      </div>
+      <button onclick="sendNoteFinderValues()">Utiliser</button>
+      <button onclick="hidePopups()">Annuler</button>
+    </section>
+    <section id="data-error-popup" class="popup">
+      <h3>Erreur</h3>
+      <p>
+        Certaines valeurs n'ont pas été renseignées ou sont invalides. Merci de
+        vérifier votre saisie.
+      </p>
+      <button onclick="hidePopups()">J'ai compris</button>
+    </section>
     <!-- popups -->
     <!-- chart -->
     <div id="partiels-chart"></div>
@@ -105,67 +137,137 @@
       <h1>Assistant de calcul des partiels d'une cloche</h1>
     </header>
     <main id="content">
-      <section id="settings" data-html2canvas-ignore="true">
-        <div>
-          <h3>Fréquence du <i>la</i>3/A4</h3>
-          <select
-            name="base-note-select"
-            id="base-note-select"
-            oninput="thPartielsValues('fondamental'), mePartielsValues()"
-          >
-            <option value="440">440 Hz (ref. 1953)</option>
-            <option value="435">435 Hz (ref. 1859)</option>
-            <option value="422">422 Hz (1780)</option>
-            <option value="423">423 Hz (1751)</option>
-            <option value="404">404 Hz (1700)</option>
-            <option value="403">403 Hz (1648)</option>
-          </select>
-        </div>
-        <div>
-          <h3>Système de notes</h3>
-          <select
-            name="note-system-select"
-            id="note-system-select"
-            oninput="thPartielsValues('fondamental'), mePartielsValues()"
-          >
-            <option value="latin">Latin (do)</option>
-            <option value="latin-old">Latin (ut)</option>
-            <option value="english">Anglais</option>
-            <option value="deutsch">Germanique</option>
-          </select>
-        </div>
-        <div>
-          <h3>Notes des partiels mesurés</h3>
-          <select
-            name="me-partiels-notes-select"
-            id="me-partiels-notes-select"
-            oninput="mePartielsValues()"
-          >
-            <option value="absolute">Absolues</option>
-            <option value="relative">Relatives</option>
-          </select>
-        </div>
-        <div>
-          <h3>Sauvegarder les résultats</h3>
-          <button
-            id="dl-results-options"
-            type="button"
-            onclick="showPopup('dl-results-popup'), getDownloadResultsFormat()"
-          >
-            Options
-          </button>
-        </div>
-        <div>
-          <h3>Graphique</h3>
-          <button
-            id="show-partiels-chart"
-            type="button"
-            onclick="showPartielsChart()"
-          >
-            Afficher
-          </button>
-        </div>
+      <section class="toggle-menu" data-html2canvas-ignore="true">
+        <section id="settings">
+          <div>
+            <h3>Fréquence du <i>la</i>3/A4</h3>
+            <select
+              name="base-note-select"
+              id="base-note-select"
+              oninput="thPartielsValues('fondamental'), mePartielsValues(), setNoteFinderValues()"
+            >
+              <option value="440">440 Hz (ref. 1953)</option>
+              <option value="435">435 Hz (ref. 1859)</option>
+              <option value="422">422 Hz (1780)</option>
+              <option value="423">423 Hz (1751)</option>
+              <option value="404">404 Hz (1700)</option>
+              <option value="403">403 Hz (1648)</option>
+            </select>
+          </div>
+          <div>
+            <h3>Système de notes</h3>
+            <select
+              name="note-system-select"
+              id="note-system-select"
+              oninput="thPartielsValues('fondamental'), mePartielsValues(), setNoteFinderValues()"
+            >
+              <option value="latin">Latin (do)</option>
+              <option value="latin-old">Latin (ut)</option>
+              <option value="english">Anglais</option>
+              <option value="german">Germanique</option>
+            </select>
+          </div>
+          <div>
+            <h3>Notes des partiels mesurés</h3>
+            <select
+              name="me-partiels-notes-select"
+              id="me-partiels-notes-select"
+              oninput="mePartielsValues()"
+            >
+              <option value="relative">Relatives</option>
+              <option value="absolute">Absolues</option>
+            </select>
+          </div>
+          <div>
+            <h3>Sauvegarder les résultats</h3>
+            <button
+              id="dl-results-options"
+              type="button"
+              onclick="showPopup('dl-results-popup'), getDownloadResultsFormat()"
+            >
+              Options
+            </button>
+          </div>
+          <div>
+            <h3>Graphique</h3>
+            <button
+              id="show-partiels-chart"
+              type="button"
+              onclick="showPartielsChart()"
+            >
+              Afficher
+            </button>
+          </div>
+        </section>
+        <section id="note-finder">
+          <h2>
+            <p class="note-finder-title">Notes parfaites les plus proches</p>
+          </h2>
+          <div id="note-finder-content">
+            <div id="note-finder-previous">
+              <h3>Note précédente</h3>
+              <div class="note-finder-info">
+                <p id="note-finder-previous-frequency">Non renseignée</p>
+                <p id="note-finder-previous-note">?</p>
+              </div>
+              <button
+                disabled
+                class="note-finder-send"
+                id="note-finder-send-previous"
+                type="button"
+                onclick="showPopup('use-note-finder-frequency'), setNoteFinderValuesPopup('previous')"
+              >
+                Utiliser
+              </button>
+            </div>
+            <div id="note-finder-frequency">
+              <h3>Fréquence mesurée</h3>
+              <div class="input-frequency">
+                <input
+                  type="number"
+                  id="note-finder-measured-frequency"
+                  name="note-finder-measured-frequency"
+                  required
+                  step="0.01"
+                  min="67.25"
+                  max="7039.99"
+                  placeholder="Fréquence"
+                  onchange="setNoteFinderValues()"
+                  onkeyup="setNoteFinderValues()"
+                />
+                <p>Hz</p>
+              </div>
+              <div class="note-finder-info">
+                <p id="note-finder-closest"></p>
+              </div>
+            </div>
+            <div id="note-finder-next">
+              <h3>Note suivante</h3>
+              <div class="note-finder-info">
+                <p id="note-finder-next-frequency">Non renseignée</p>
+                <p id="note-finder-next-note">?</p>
+              </div>
+              <button
+                disabled
+                class="note-finder-send"
+                id="note-finder-send-next"
+                type="button"
+                onclick="showPopup('use-note-finder-frequency'), setNoteFinderValuesPopup('next')"
+              >
+                Utiliser
+              </button>
+            </div>
+          </div>
+        </section>
       </section>
+      <button
+        id="toggle-menu-button"
+        type="button"
+        data-html2canvas-ignore="true"
+        onclick="toggleMenu()"
+      >
+        Réduire ▲
+      </button>
       <div id="partiels-content">
         <article id="th-partiels-global">
           <h2>
@@ -186,9 +288,9 @@
                   id="th-bourdon-frequency"
                   name="th-bourdon-frequency"
                   required
-                  step="0.1"
+                  step="0.01"
                   min="63.77"
-                  max="8133.68"
+                  max="7449.71"
                   placeholder="Fréquence"
                   onchange="thPartielsValues('bourdon'), mePartielsValues()"
                   onkeyup="thPartielsValues('bourdon'), mePartielsValues()"
@@ -207,9 +309,9 @@
                   id="th-fondamental-frequency"
                   name="th-fondamental-frequency"
                   required
-                  step="0.1"
+                  step="0.01"
                   min="63.77"
-                  max="8133.68"
+                  max="7449.71"
                   placeholder="Fréquence"
                   onchange="thPartielsValues('fondamental'), mePartielsValues()"
                   onkeyup="thPartielsValues('fondamental'), mePartielsValues()"
@@ -228,9 +330,9 @@
                   id="th-tierce-mineure-frequency"
                   name="th-tierce-mineure-frequency"
                   required
-                  step="0.1"
+                  step="0.01"
                   min="63.77"
-                  max="8133.68"
+                  max="7449.71"
                   placeholder="Fréquence"
                   onchange="thPartielsValues('tierce-mineure'), mePartielsValues()"
                   onkeyup="thPartielsValues('tierce-mineure'), mePartielsValues()"
@@ -249,9 +351,9 @@
                   id="th-quinte-frequency"
                   name="th-quinte-frequency"
                   required
-                  step="0.1"
+                  step="0.01"
                   min="63.77"
-                  max="8133.68"
+                  max="7449.71"
                   placeholder="Fréquence"
                   onchange="thPartielsValues('quinte'), mePartielsValues()"
                   onkeyup="thPartielsValues('quinte'), mePartielsValues()"
@@ -270,9 +372,9 @@
                   id="th-nominal-frequency"
                   name="th-nominal-frequency"
                   required
-                  step="0.1"
+                  step="0.01"
                   min="63.77"
-                  max="8133.68"
+                  max="7449.71"
                   placeholder="Fréquence"
                   onchange="thPartielsValues('nominal'), mePartielsValues()"
                   onkeyup="thPartielsValues('nominal'), mePartielsValues()"
@@ -304,9 +406,9 @@
                   id="me-bourdon-frequency"
                   name="me-bourdon-frequency"
                   required
-                  step="0.1"
+                  step="0.01"
                   min="63.77"
-                  max="8133.68"
+                  max="7449.71"
                   placeholder="Fréquence"
                   onchange="mePartielsValues()"
                   onkeyup="mePartielsValues()"
@@ -326,9 +428,9 @@
                   id="me-fondamental-frequency"
                   name="me-fondamental-frequency"
                   required
-                  step="0.1"
+                  step="0.01"
                   min="63.77"
-                  max="8133.68"
+                  max="7449.71"
                   placeholder="Fréquence"
                   onchange="mePartielsValues()"
                   onkeyup="mePartielsValues()"
@@ -348,9 +450,9 @@
                   id="me-tierce-mineure-frequency"
                   name="me-tierce-mineure-frequency"
                   required
-                  step="0.1"
+                  step="0.01"
                   min="63.77"
-                  max="8133.68"
+                  max="7449.71"
                   placeholder="Fréquence"
                   onchange="mePartielsValues()"
                   onkeyup="mePartielsValues()"
@@ -370,9 +472,9 @@
                   id="me-quinte-frequency"
                   name="me-quinte-frequency"
                   required
-                  step="0.1"
+                  step="0.01"
                   min="63.77"
-                  max="8133.68"
+                  max="7449.71"
                   placeholder="Fréquence"
                   onchange="mePartielsValues()"
                   onkeyup="mePartielsValues()"
@@ -392,9 +494,9 @@
                   id="me-nominal-frequency"
                   name="me-nominal-frequency"
                   required
-                  step="0.1"
+                  step="0.01"
                   min="63.77"
-                  max="8133.68"
+                  max="7449.71"
                   placeholder="Fréquence"
                   onchange="mePartielsValues()"
                   onkeyup="mePartielsValues()"
@@ -417,10 +519,16 @@
     </main>
     <footer>
       <p id="footer-title">Audiobell</p>
-      <a href="wiki.html" target="_blank">Wiki</a>
-      <a href="https://github.com/huldf/audiobell/" target="_blank"
-        >Code source</a
-      >
+      <div class="footer-line">
+        <a href="index.html" target="_blank">Site Web</a>
+        <a href="wiki.html" target="_blank">Wiki</a>
+        <a href="https://github.com/huldf/audiobell" target="_blank"
+          >Code source</a
+        >
+        <a href="https://github.com/huldf/audiobell/releases" target="_blank"
+          >Changelog</a
+        >
+      </div>
     </footer>
   </body>
 </html>
